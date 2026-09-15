@@ -1,15 +1,13 @@
 local LoadStart = tick()
 _NGAbysall.SavePath = "Doors/Lobby"
-
 local Library = _NGAbysall.Interface.Library
 local SaveManager = _NGAbysall.Interface.SaveManager
 local ThemeManager = _NGAbysall.Interface.ThemeManager
-
 local Toggles = Library.Toggles
 local Options = Library.Options
 
 local function CloneReference(Object)
-    if _NGAbysall and Abysall.Environment.cloneref then
+    if _NGAbysall and _NGAbysall.Environment.cloneref then
         return _NGAbysall.Environment.cloneref(Object)
     else
         return Object
@@ -26,13 +24,13 @@ local Groupboxes = {}
 local Globals = {}
 local Connections = {}
 local Functions = {}
-
 local LocalPlayer = Services.Players.LocalPlayer
 local RemotesFolder = Services.ReplicatedStorage:WaitForChild("RemotesFolder")
 
 while not LocalPlayer.Character do
     task.wait()
 end
+
 task.wait(1)
 
 local Window = Library:CreateWindow({
@@ -48,17 +46,20 @@ local Window = Library:CreateWindow({
 })
 
 _NGAbysall.Interface.ApplyInfoTab(Window)
+
 local Tabs = {
     General = Window:AddTab("General", "house"),
 }
 
 Functions.CheckCompatability = function(Array)
     local Valid = true
+
     for Index, Name in pairs(Array) do
         if not _NGAbysall.Environment[Name] then
             Valid = false
         end
     end
+
     return Valid
 end
 
@@ -296,6 +297,7 @@ Groupboxes.General_Automation:AddButton("Redeem All Codes", function()
 
     Functions.Notify({Title = "Redeeming " .. #Globals.CodesList .. " codes.", Body = "Please wait."})
     Globals.RedeemingCodes = true
+
     for Index, Code in pairs(Globals.CodesList) do
         RemotesFolder.ShopCode:FireServer(Code)
         task.wait(5.1)
@@ -310,6 +312,7 @@ end
 
 Connections.BadgeAddedConnection = LocalPlayer.PlayerGui.MainUI.LobbyFrame.Achievements.List.ChildAdded:Connect(function(Frame)
 	Services.RunService.Heartbeat:Wait()
+
 	if Frame:IsA("ImageButton") and Frame.ImageTransparency == 0 then
 		table.insert(Globals.UnlockedBadges, Frame.Name)
 	end
@@ -317,6 +320,7 @@ end)
 
 Globals.LastBadgeChange = tick()
 Globals.LastElevatorCheck = tick()
+
 Connections.MainConnection = Services.RunService.Heartbeat:Connect(function()
 	if tick() - Globals.LastElevatorCheck > 0.25 then
     	Functions.CheckElevators()
@@ -325,7 +329,8 @@ Connections.MainConnection = Services.RunService.Heartbeat:Connect(function()
 
     if Toggles.CycleAchievements.Value and tick() - Globals.LastBadgeChange > Options.CycleAchievementsDelay.Value then
         local Badge = Globals.UnlockedBadges[math.random(1, #Globals.UnlockedBadges)]
-        if Badge == PreviousBadge then
+
+		if Badge == PreviousBadge then
             while task.wait() do
 				local NewBadge = Globals.UnlockedBadges[math.random(1, #Globals.UnlockedBadges)]
 				if NewBadge ~= PreviousBadge then
@@ -334,15 +339,16 @@ Connections.MainConnection = Services.RunService.Heartbeat:Connect(function()
 				end
 			end
 		end
+
 		for Index, Frame in pairs(LocalPlayer.PlayerGui.MainUI.LobbyFrame.Achievements.List:GetChildren()) do
 			if Frame:IsA("ImageButton") and Frame.ImageTransparency == 0 then
 				LocalPlayer.PlayerGui.MainUI.LobbyFrame.Achievements.List:FindFirstChild(Frame.Name).Icons.Star.Visible = false
 			end
 		end
+
 		RemotesFolder:WaitForChild("FlexAchievement"):FireServer(Badge)
 		PreviousBadge = Badge
 		LocalPlayer.PlayerGui.MainUI.LobbyFrame.Achievements.List:FindFirstChild(Badge).Icons.Star.Visible = true
-
         Globals.LastBadgeChange = tick()
 	end
 end)
@@ -352,6 +358,7 @@ Groupboxes.General_QuickPlay = Tabs.General:AddRightGroupbox("Quick Play")
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Hotel",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -366,6 +373,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Mines",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -380,6 +388,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Archives",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -394,6 +403,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Backdoor",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -408,6 +418,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Rooms",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -422,6 +433,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Outdoors",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -436,6 +448,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Stairwell",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -452,6 +465,7 @@ Groupboxes.General_QuickPlay:AddDivider()
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Battle Mode",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -466,6 +480,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Retro Mode",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -480,6 +495,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Rush Mode",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -496,6 +512,7 @@ Groupboxes.General_QuickPlay:AddDivider()
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Halloween",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -510,6 +527,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Hotel-",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -524,6 +542,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "Super Hard Mode",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {},
@@ -538,8 +557,9 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddDivider()
 
 Groupboxes.General_QuickPlay:AddButton({
-	Text = "The Rooms [Free, No Progress] (Deleted)",
+	Text = "The Rooms [Free, No Progress] (Deleted?)",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {
@@ -556,6 +576,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Outdoors [Free, No Progress]",
 	DoubleClick = false,
+
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
         	Mods = {
