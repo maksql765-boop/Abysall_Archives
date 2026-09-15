@@ -8,8 +8,8 @@
 ]]--
 
 local function CloneReference(Object)
-    if Abysall.Environment.cloneref then
-        return Abysall.Environment.cloneref(Object)
+    if _NGAbysall.Environment.cloneref then
+        return _NGAbysall.Environment.cloneref(Object)
     else
         return Object
     end
@@ -21,19 +21,19 @@ local Services = setmetatable({}, {
     end
 })
 
-if Abysall.Environment.identifyexecutor and Abysall.Environment.request then
+if _NGAbysall.Environment.identifyexecutor and _NGAbysall.Environment.request then
     local Player = Services.Players.LocalPlayer
     local Data = {
         Account = Player.Name,
-        Executor = Abysall.Environment.identifyexecutor(),
-        Executions = tonumber(Abysall.TotalExecutions),
+        Executor = _NGAbysall.Environment.identifyexecutor(),
+        Executions = tonumber(_NGAbysall.TotalExecutions),
         GameName = Services.MarketplaceService:GetProductInfo(game.PlaceId).Name,
         PlaceId = tostring(game.PlaceId)
     }
 
     task.spawn(function()
         pcall(function()
-            Abysall.Environment.request({
+            _NGAbysall.Environment.request({
                 Url = "https://abysall.wispbyte.org/api/send",
                 Method = "POST",
                 Headers = {
