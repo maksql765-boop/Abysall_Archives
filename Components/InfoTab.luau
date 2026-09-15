@@ -9,8 +9,8 @@ return function(Window)
     }
 
     local function CloneReference(Object)
-        if Abysall and Abysall.Environment.cloneref then
-            return Abysall.Environment.cloneref(Object)
+        if _NGAbysall and _NGAbysall.Environment.cloneref then
+            return _NGAbysall.Environment.cloneref(Object)
         else
             return Object
         end
@@ -22,21 +22,16 @@ return function(Window)
         end
     })
 
-    local Library = Abysall.Interface.Library
-    local SaveManager = Abysall.Interface.SaveManager
-    local ThemeManager = Abysall.Interface.ThemeManager
-
+    local Library = _NGAbysall.Interface.Library
+    local SaveManager = _NGAbysall.Interface.SaveManager
+    local ThemeManager = _NGAbysall.Interface.ThemeManager
     local Toggles = Library.Toggles
     local Options = Library.Options
-
     local LocalPlayer = Services.Players.LocalPlayer
     local InfoTab = Window:AddTab("Info", "user")
-
     local User = InfoTab:AddLeftGroupbox("User Info")
-
     local ImageSize = Enum.ThumbnailSize.Size420x420
     local ImageType = Enum.ThumbnailType.HeadShot
-
     local Content = Services.Players:GetUserThumbnailAsync(LocalPlayer.UserId, ImageType, ImageSize)
 
     User:AddImage("UserIcon", {
@@ -44,25 +39,24 @@ return function(Window)
     })
 
     User:AddLabel("ID: " .. LocalPlayer.Name, true)
-    User:AddLabel("Total Executions: " .. (Abysall.TotalExecutions and Abysall.TotalExecutions or "N/A"), true)
-
+    User:AddLabel("Total Executions: " .. (_NGAbysall.TotalExecutions and _NGAbysall.TotalExecutions or "N/A"), true)
     local Changelog = InfoTab:AddRightGroupbox("Changelog")
+
     for Index, Change in pairs(LatestChangelog) do
         Changelog:AddLabel(Change, true)
     end
 
-    local Name, Version = Abysall.Environment.identifyexecutor()
+    local Name, Version = _NGAbysall.Environment.identifyexecutor()
     local Executor = InfoTab:AddRightGroupbox("Executor Info")
     Executor:AddLabel("Name: " .. Name, true)
 	Executor:AddLabel("Version: " .. (Version and Version or "N/A"), true)
     Executor:AddDivider()
     Executor:AddLabel("Test Result: ", true)
 
-    for Index, Result in pairs(Abysall.Environment.Results) do
+    for Index, Result in pairs(_NGAbysall.Environment.Results) do
 		-- fix for veloshitty 💔
 		Result = Result:gsub("<", "(")
 		Result = Result:gsub(">", ")")
-		
         Executor:AddLabel(Result, true)
     end
 
