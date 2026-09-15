@@ -48,9 +48,9 @@ if GameData and GameData.Floor.Value ~= "Hotel" then
 		local RemotesFolder = game:GetService("ReplicatedStorage").RemotesFolder
 		local function SendCaption(Text)
 			if firesignal then
-				firesignal(RemotesFolder.Caption.OnClientEvent, "[Abysall Hub] (Nortfix Edition)" .. Text)
+				firesignal(RemotesFolder.Caption.OnClientEvent, "[Abysall Hub] (Nortfix Edited)" .. Text)
 			else
-				RemotesFolder.CaptionClient:Fire("[Abysall Hub] " .. Text)
+				RemotesFolder.CaptionClient:Fire("[Abysall Hub] (Nortfix Edited)" .. Text)
 			end
 		end
 
@@ -128,6 +128,7 @@ local function WalkPosition(TargetPosition)
 
 	local Connection = Services.RunService.RenderStepped:Connect(function()
 		Humanoid:MoveTo(TargetPosition)
+
 		if LocalPlayer:DistanceFromCharacter(TargetPosition) < 6 then
 			Finished = true
 		end
