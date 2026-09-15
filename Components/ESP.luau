@@ -19,7 +19,6 @@ local Library = {
 	DistanceSizeRatio = 1,
 	OutlineColor = Color3.fromRGB(255, 255, 255),
 	RainbowColor = Color3.fromRGB(255, 255, 255),
-
 	ElementsEnabled = {},
 	TransparencyEnabled = {},
 	Highlights = {},
@@ -62,10 +61,12 @@ function Library:GenerateRandomString()
 	local Chars = {}
 	local Pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	local PoolLen = #Pool
+
 	for I = 1, 24 do
 		local Idx = math.random(1, PoolLen)
 		Chars[I] = Pool:sub(Idx, Idx)
 	end
+
 	return table.concat(Chars)
 end
 
@@ -112,6 +113,7 @@ ArrowConstraint.Name = Library:GenerateRandomString()
 ArrowConstraint.Parent = ArrowTemplate
 
 local TweenInfoQuad = TweenInfo.new(0, Enum.EasingStyle.Quad)
+
 local function MakeTween(Instance_, Props)
 	local Info = TweenInfo.new(Library.FadeTime, Enum.EasingStyle.Quad)
 	return TweenService:Create(Instance_, Info, Props)
@@ -129,28 +131,33 @@ local function DestroyObjectData(Object)
 	end
 
 	local Frame = Library.Frames[Object]
+
 	if Frame then
 		Frame:Destroy()
 		Library.Frames[Object] = nil
 	end
 
 	local LineData = Library.Lines[Object]
+
 	if LineData then
 		if LineData[1] then LineData[1]:Destroy() end
 		Library.Lines[Object] = nil
 	end
 
 	local Arrow = Library.ArrowsTable[Object]
+
 	if Arrow then
 		Arrow:Destroy()
 		Library.ArrowsTable[Object] = nil
 	end
 
 	local Conns = Library.ConnectionsTable[Object]
+
 	if Conns then
 		for _, Conn in ipairs(Conns) do
 			Conn:Disconnect()
 		end
+
 		Library.ConnectionsTable[Object] = nil
 	end
 
@@ -224,9 +231,11 @@ function Library:AddESP(Parameters)
 	PlayTween(Highlight, { OutlineTransparency = Library.OutlineTransparency })
 
 	local TextFadeIn = MakeTween(TextLabel, { TextTransparency = Library.TextTransparency })
+
 	TextFadeIn.Completed:Once(function()
 		Library.TransparencyEnabled[Object] = true
 	end)
+
 	TextFadeIn:Play()
 	PlayTween(TextLabel, { TextStrokeTransparency = Library.TextOutlineTransparency })
 
@@ -260,7 +269,6 @@ function Library:AddESP(Parameters)
 
 			local ObjectPos = Object:GetPivot().Position
 			local ScreenPoint, OnScreen = Camera:WorldToViewportPoint(ObjectPos)
-
 			local Frame = Library.Frames[Object]
 			local Label = Library.Labels[Object]
 			local CachedHighlight = Library.Highlights[Object]
@@ -272,6 +280,7 @@ function Library:AddESP(Parameters)
 
 			if Frame then
 				Frame.Visible = OnScreen
+
 				if OnScreen then
 					Frame.Position = UDim2.new(0, ScreenPoint.X, 0, ScreenPoint.Y)
 				end
@@ -302,9 +311,8 @@ function Library:AddESP(Parameters)
 
 			if CachedHighlight then
 				local Distance = math.floor((Camera.CFrame.Position - ObjectPos).Magnitude)
-				local DistanceText = Library.ShowDistance
-					and ("\n" .. '<font size="' .. math.round(Library.TextSize * Library.DistanceSizeRatio) .. '">[' .. Distance .. ']</font>')
-					or ""
+				local DistanceText = Library.ShowDistance and ("\n" .. '<font size="' .. math.round(Library.TextSize * Library.DistanceSizeRatio) .. '">[' .. Distance .. ']</font>') or ""
+
 				if Label then
 					Label.Text = Library.TextTable[Object] .. DistanceText
 				end
@@ -316,6 +324,7 @@ function Library:AddESP(Parameters)
 				if Library.TransparencyEnabled[Object] == true then
 					CachedHighlight.FillTransparency = Library.FillTransparency
 					CachedHighlight.OutlineTransparency = Library.OutlineTransparency
+
 					if Label then
 						Label.TextTransparency = Library.TextTransparency
 						Label.TextStrokeTransparency = Library.TextOutlineTransparency
@@ -357,6 +366,7 @@ function Library:AddESP(Parameters)
 
 			if Library.Arrows == true then
 				local Arrow = Library.ArrowsTable[Object]
+
 				if Arrow == nil and Library.ElementsEnabled[Object] == true then
 					Arrow = ArrowTemplate:Clone()
 					Arrow.Name = Library:GenerateRandomString()
@@ -372,9 +382,11 @@ function Library:AddESP(Parameters)
 						local ScreenCenter = Vector2.new(ScreenSize.X / 2, ScreenSize.Y / 2)
 						local ToObj = (ObjectPos - Camera.CFrame.Position).Unit
 						local Dir = Vector2.new(ScreenPoint.X, ScreenPoint.Y) - ScreenCenter
+
 						if Camera.CFrame.LookVector:Dot(ToObj) < 0 then
 							Dir = -Dir
 						end
+
 						local Angle = math.atan2(Dir.Y, Dir.X)
 						local Radius = math.min(ScreenSize.X, ScreenSize.Y) / 2 - (400 - Library.ArrowRadius)
 						local ArrowPos = ScreenCenter + Dir.Unit * Radius
@@ -389,17 +401,22 @@ function Library:AddESP(Parameters)
 		end
 
 		local Connection
+
 		Connection = RunService.Heartbeat:Connect(function(Delta)
 			Last = Last + Delta
+
 			if Last >= 1 / Library.RenderLimit then
 				Last = 0
+
 				if Library.ElementsEnabled[Object] ~= true then
 					Connection:Disconnect()
 					return
 				end
+
 				Render()
 			end
 		end)
+
 		table.insert(Library.ConnectionsTable[Object], Connection)
 	end)
 end
@@ -408,25 +425,28 @@ function Library:RemoveESP(Object)
 	if Library.Unloaded == true or Library.ElementsEnabled[Object] ~= true then return end
 	Library.ElementsEnabled[Object] = false
 	Library.TransparencyEnabled[Object] = false
-
 	local Label = Library.Labels[Object]
+
 	if Label then
 		PlayTween(Label, { TextTransparency = 1 })
 	end
 
 	local LineData = Library.Lines[Object]
+
 	if LineData then
 		if LineData[1] then PlayTween(LineData[1], { BackgroundTransparency = 1 }) end
 		if LineData[2] then PlayTween(LineData[2], { Transparency = 1 }) end
 	end
 
 	local Highlight = Library.Highlights[Object]
+
 	if Highlight then
 		PlayTween(Highlight, { FillTransparency = 1 })
 		PlayTween(Highlight, { OutlineTransparency = 1 })
 	end
 
 	local Arrow = Library.ArrowsTable[Object]
+
 	if Arrow then
 		PlayTween(Arrow, { ImageTransparency = 1 })
 	end
@@ -462,6 +482,7 @@ end
 
 function Library:UpdateObjectColor(Object, Color)
 	Library.ColorTable[Object] = Color
+
 	if Library.Labels[Object] and Library.Rainbow ~= true then
 		Library.Labels[Object].TextColor3 = Color
 	end
@@ -481,6 +502,7 @@ end
 
 function Library:SetTextTransparency(Number)
 	Library.TextTransparency = Number
+
 	for _, Label in pairs(Library.Labels) do
 		Label.TextTransparency = Number
 	end
@@ -488,6 +510,7 @@ end
 
 function Library:SetFillTransparency(Number)
 	Library.FillTransparency = Number
+
 	for _, Highlight in pairs(Library.Highlights) do
 		if Highlight:IsA("Highlight") then
 			Highlight.FillTransparency = Number
@@ -497,6 +520,7 @@ end
 
 function Library:SetOutlineTransparency(Number)
 	Library.OutlineTransparency = Number
+
 	for _, Highlight in pairs(Library.Highlights) do
 		if Highlight:IsA("Highlight") then
 			Highlight.OutlineTransparency = Number
@@ -506,6 +530,7 @@ end
 
 function Library:SetTextSize(Number)
 	Library.TextSize = Number
+
 	for _, Label in pairs(Library.Labels) do
 		Label.TextSize = Number
 	end
@@ -513,6 +538,7 @@ end
 
 function Library:SetTextOutlineTransparency(Number)
 	Library.TextOutlineTransparency = Number
+
 	for _, Label in pairs(Library.Labels) do
 		Label.TextStrokeTransparency = Number
 	end
@@ -520,6 +546,7 @@ end
 
 function Library:SetFont(Font)
 	Library.Font = Font
+
 	for _, Label in pairs(Library.Labels) do
 		Label.Font = Font
 	end
@@ -570,14 +597,17 @@ end
 function Library:Unload()
 	if Library.Unloaded then return end
 	Library.Unloaded = true
+
 	for _, Object in pairs(Library.Objects) do
 		Library:RemoveESP(Object)
 	end
+
 	for _, Conns in pairs(Library.ConnectionsTable) do
 		for _, Conn in ipairs(Conns) do
 			Conn:Disconnect()
 		end
 	end
+
 	RainbowConnection:Disconnect()
 	CameraConnection:Disconnect()
 	ScreenGui.Enabled = false
@@ -585,6 +615,7 @@ end
 
 RainbowConnection = RunService.RenderStepped:Connect(function(Delta)
 	RainbowState.Step = RainbowState.Step + Delta
+
 	if RainbowState.Step >= (1 / 60) then
 		RainbowState.Step = 0
 		RainbowState.HueSetup = RainbowState.HueSetup + (1 / 400)
