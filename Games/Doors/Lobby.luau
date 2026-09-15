@@ -1,16 +1,16 @@
 local LoadStart = tick()
-Abysall.SavePath = "Doors/Lobby"
+_NGAbysall.SavePath = "Doors/Lobby"
 
-local Library = Abysall.Interface.Library
-local SaveManager = Abysall.Interface.SaveManager
-local ThemeManager = Abysall.Interface.ThemeManager
+local Library = _NGAbysall.Interface.Library
+local SaveManager = _NGAbysall.Interface.SaveManager
+local ThemeManager = _NGAbysall.Interface.ThemeManager
 
 local Toggles = Library.Toggles
 local Options = Library.Options
 
 local function CloneReference(Object)
-    if Abysall and Abysall.Environment.cloneref then
-        return Abysall.Environment.cloneref(Object)
+    if _NGAbysall and Abysall.Environment.cloneref then
+        return _NGAbysall.Environment.cloneref(Object)
     else
         return Object
     end
@@ -36,7 +36,7 @@ end
 task.wait(1)
 
 local Window = Library:CreateWindow({
-    Title = "Abysall Hub",
+    Title = "Abysall Hub (Nortfix Edited)",
     Footer = "dsc.gg/abysallhub",
     NotifySide = "Right",
     ShowCustomCursor = false,
@@ -47,7 +47,7 @@ local Window = Library:CreateWindow({
     CornerRadius = 2,
 })
 
-Abysall.Interface.ApplyInfoTab(Window)
+_NGAbysall.Interface.ApplyInfoTab(Window)
 local Tabs = {
     General = Window:AddTab("General", "house"),
 }
@@ -55,7 +55,7 @@ local Tabs = {
 Functions.CheckCompatability = function(Array)
     local Valid = true
     for Index, Name in pairs(Array) do
-        if not Abysall.Environment[Name] then
+        if not _NGAbysall.Environment[Name] then
             Valid = false
         end
     end
@@ -64,7 +64,7 @@ end
 
 local function GetHiddenContainer()
 	if Functions.CheckCompatability({"gethui"}) then
-		return Abysall.Environment.gethui()
+		return _NGAbysall.Environment.gethui()
 	else
 		return Services.CoreGui
 	end
@@ -76,7 +76,7 @@ local NotificationLibrary = {
 }
 
 local Container = Instance.new("ScreenGui")
-Container.Name = Abysall.ESPLibrary:GenerateRandomString()
+Container.Name = _NGAbysall.ESPLibrary:GenerateRandomString()
 Container.Parent = GetHiddenContainer()
 Container.DisplayOrder = 32767
 Container.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -174,6 +174,7 @@ function NotificationLibrary:Notify(TitleText, Desc, Delay)
                 Services.TweenService:Create(Object, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {Position = UDim2.new(1, -370, 0, Object:GetAttribute("CurrentPosition").Y.Offset)}):Play()
             end
         end
+
         task.wait(0.75)
 		Notification:Destroy()
 	end)
@@ -182,7 +183,7 @@ end
 Functions.Notify = function(Settings)
     local Container
     if Functions.CheckCompatability({"gethui"}) then
-        Container = Abysall.Environment.gethui()
+        Container = _NGAbysall.Environment.gethui()
     else
         Container = Services.CoreGui
     end
@@ -192,7 +193,6 @@ Functions.Notify = function(Settings)
     Sound.Volume = 3
     Sound.PlayOnRemove = true
     Sound:Destroy()
-
     NotificationLibrary:Notify(Settings.Title, Settings.Body, Settings.Time or 5)
 end
 
@@ -378,6 +378,20 @@ Groupboxes.General_QuickPlay:AddButton({
 })
 
 Groupboxes.General_QuickPlay:AddButton({
+	Text = "The Archives",
+	DoubleClick = false,
+	Func = function()
+		RemotesFolder.CreateElevator:FireServer({
+        	Mods = {},
+        	Settings = {},
+        	Destination = "Archives",
+        	FriendsOnly = false,
+        	MaxPlayers = "1"
+    	})
+	end
+})
+
+Groupboxes.General_QuickPlay:AddButton({
 	Text = "The Backdoor",
 	DoubleClick = false,
 	Func = function()
@@ -413,6 +427,20 @@ Groupboxes.General_QuickPlay:AddButton({
         	Mods = {},
         	Settings = {},
         	Destination = "Garden",
+        	FriendsOnly = false,
+        	MaxPlayers = "1"
+    	})
+	end
+})
+
+Groupboxes.General_QuickPlay:AddButton({
+	Text = "The Stairwell",
+	DoubleClick = false,
+	Func = function()
+		RemotesFolder.CreateElevator:FireServer({
+        	Mods = {},
+        	Settings = {},
+        	Destination = "Stairwell",
         	FriendsOnly = false,
         	MaxPlayers = "1"
     	})
@@ -510,7 +538,7 @@ Groupboxes.General_QuickPlay:AddButton({
 Groupboxes.General_QuickPlay:AddDivider()
 
 Groupboxes.General_QuickPlay:AddButton({
-	Text = "The Rooms [Free, No Progress]",
+	Text = "The Rooms [Free, No Progress] (Deleted)",
 	DoubleClick = false,
 	Func = function()
 		RemotesFolder.CreateElevator:FireServer({
@@ -543,8 +571,8 @@ Groupboxes.General_QuickPlay:AddButton({
 
 Library:OnUnload(function()
     Connections.MainConnection:Disconnect()
-	getgenv().Abysall = nil
+	getgenv()._NGAbysall = nil
 end)
 
-Abysall.Interface.ApplySettingsTab(Window)
+_NGAbysall.Interface.ApplySettingsTab(Window)
 Functions.Notify({ Title = "Successfully loaded in " .. math.floor((tick() - LoadStart) * 1000) / 1000 .. " seconds." , Body = "Press '" .. tostring(Options.MenuKeybind.Value) .. "' to toggle the UI."})
