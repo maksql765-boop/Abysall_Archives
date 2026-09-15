@@ -1,7 +1,7 @@
 return function(Window)
 	local function CloneReference(Object)
-		if Abysall and Abysall.Environment.cloneref then
-			return Abysall.Environment.cloneref(Object)
+		if _NGAbysall and _NGAbysall.Environment.cloneref then
+			return _NGAbysall.Environment.cloneref(Object)
 		else
 			return Object
 		end
@@ -13,9 +13,9 @@ return function(Window)
 		end
 	})
 
-	local Library = Abysall.Interface.Library
-	local SaveManager = Abysall.Interface.SaveManager
-	local ThemeManager = Abysall.Interface.ThemeManager
+	local Library = _NGAbysall.Interface.Library
+	local SaveManager = _NGAbysall.Interface.SaveManager
+	local ThemeManager = _NGAbysall.Interface.ThemeManager
 	
 	local Toggles = Library.Toggles
 	local Options = Library.Options
@@ -44,18 +44,18 @@ return function(Window)
 			"Obsidian",
 			"Linoria"
 		},
-		Default = (Abysall.UILibrary == "Linoria" and 2 or 1),
+		Default = (_NGAbysall.UILibrary == "Linoria" and 2 or 1),
 		Callback = function(Value)
-			if Abysall.Environment.writefile and Abysall.Environment.readfile then
-				if not Abysall.Environment.isfile("Abysall/UserData.json") then
+			if _NGAbysall.Environment.writefile and _NGAbysall.Environment.readfile then
+				if not _NGAbysall.Environment.isfile("Abysall/UserData.json") then
 					local Data = {
 						TotalExecutions = 0,
 						UILibrary = "Obsidian"
 					}
-					Abysall.Environment.writefile("Abysall/UserData.json", Services.HttpService:JSONEncode(Data))
+					_NGAbysall.Environment.writefile("Abysall/UserData.json", Services.HttpService:JSONEncode(Data))
 				end
 
-				local UserData = Abysall.Environment.readfile("Abysall/UserData.json")
+				local UserData = _NGAbysall.Environment.readfile("Abysall/UserData.json")
 				local Decoded = Services.HttpService:JSONDecode(UserData)
 				Decoded.UILibrary = Value
 
@@ -63,10 +63,10 @@ return function(Window)
 					Decoded.UILibrary = "Obsidian"
 				end
 
-				Abysall.TotalExecutions = Decoded.TotalExecutions
-				Abysall.UILibrary = Decoded.UILibrary
+				_NGAbysall.TotalExecutions = Decoded.TotalExecutions
+				_NGAbysall.UILibrary = Decoded.UILibrary
 
-				Abysall.Environment.writefile("Abysall/UserData.json", Services.HttpService:JSONEncode(Decoded))
+				_NGAbysall.Environment.writefile("Abysall/UserData.json", Services.HttpService:JSONEncode(Decoded))
 			end
 		end
 	})
@@ -103,7 +103,7 @@ return function(Window)
 	SaveManager:IgnoreThemeSettings()
 	SaveManager:SetIgnoreIndexes({"UILibrary"})
 	ThemeManager:SetFolder("Abysall")
-	SaveManager:SetFolder("Abysall/" .. Abysall.SavePath)
+	SaveManager:SetFolder("Abysall/" .. _NGAbysall.SavePath)
 	SaveManager:BuildConfigSection(SettingsTab)
 	ThemeManager:ApplyToTab(SettingsTab)
 	SaveManager:LoadAutoloadConfig()
