@@ -15,7 +15,6 @@ local QueueTeleport = queue_on_teleport or queueonteleport
 local TeleportCode = [==[
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/maksql765-boop/Abysall_Archives/refs/heads/main/Scripts/DeathFarm.luau"))()
 ]==]
-
 local LocalPlayer = Services.Players.LocalPlayer
 local RemotesFolder = Services.ReplicatedStorage:FindFirstChild("RemotesFolder")
 local CurrentRooms = Services.Workspace:FindFirstChild("CurrentRooms")
@@ -32,6 +31,7 @@ end
 if game.PlaceId == 6516141723 then
 	SendCaption("Joining a run...")
 	QueueTeleport(TeleportCode)
+
 	RemotesFolder.CreateElevator:FireServer({
 		Mods = {},
 		Settings = {},
@@ -39,6 +39,7 @@ if game.PlaceId == 6516141723 then
 		FriendsOnly = false,
 		MaxPlayers = "1"
 	})
+
 	return
 end
 
@@ -47,14 +48,14 @@ if GameData and GameData.Floor.Value ~= "Hotel" then
 		local RemotesFolder = game:GetService("ReplicatedStorage").RemotesFolder
 		local function SendCaption(Text)
 			if firesignal then
-				firesignal(RemotesFolder.Caption.OnClientEvent, "[Abysall Hub] " .. Text)
+				firesignal(RemotesFolder.Caption.OnClientEvent, "[Abysall Hub] (Nortfix Edition)" .. Text)
 			else
 				RemotesFolder.CaptionClient:Fire("[Abysall Hub] " .. Text)
 			end
 		end
 
 		local QueueTeleport = queue_on_teleport or queueonteleport
-		QueueTeleport([=[loadstring(game:HttpGet("https://raw.githubusercontent.com/bocaj111004/Abysall/refs/heads/main/Scripts/DeathFarm.luau"))()]=])
+		QueueTeleport([=[loadstring(game:HttpGet("https://raw.githubusercontent.com/maksql765-boop/Abysall_Archives/refs/heads/main/Scripts/DeathFarm.luau"))()]=])
 
 		SendCaption("Joining a run...")
 		RemotesFolder.CreateElevator:FireServer({
@@ -123,8 +124,8 @@ Services.Workspace:FindFirstChild("Luggage_Cart_Crouch", true):Destroy()
 local function WalkPosition(TargetPosition)
 	local RootPart = LocalPlayer.Character:WaitForChild("HumanoidRootPart", 9e9)
 	local Humanoid = LocalPlayer.Character:WaitForChild("Humanoid", 9e9)
-
 	local Finished = false
+
 	local Connection = Services.RunService.RenderStepped:Connect(function()
 		Humanoid:MoveTo(TargetPosition)
 		if LocalPlayer:DistanceFromCharacter(TargetPosition) < 6 then
@@ -138,10 +139,11 @@ local function WalkPosition(TargetPosition)
 			break
 		end
 	end
-	task.wait()
 
+	task.wait()
 	return true
 end
+
 task.wait(1)
 
 for Index, Object in pairs(CurrentRooms["0"].Assets:GetChildren()) do
@@ -154,11 +156,9 @@ SendCaption("Getting the key...")
 local Door = CurrentRooms["0"]:FindFirstChild("Door")
 Door.Lock.CanCollide = false
 WalkPosition(Door.Lock.Position)
-
 local Key = CurrentRooms["0"]:FindFirstChild("KeyObtain", true)
 WalkPosition(Key.Hitbox.Position)
 fireproximityprompt(Key:FindFirstChild("ModulePrompt", true))
-
 SendCaption("Got the key, opening the door...")
 local Door = CurrentRooms["0"]:FindFirstChild("Door")
 Door.Lock.CanCollide = false
@@ -178,6 +178,5 @@ end
 
 LocalPlayer:GetAttributeChangedSignal("Alive"):Wait()
 SendCaption("Player has died, joining a new run...")
-
 RemotesFolder.PlayAgain:FireServer()
 QueueTeleport(TeleportCode)
